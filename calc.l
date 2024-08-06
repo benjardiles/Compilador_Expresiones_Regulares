@@ -1,22 +1,27 @@
 %{
-    #include <studio.h> 
-    #include "y.tab.h"
-    void yyerror(char *);
-
-
+#include <stdio.h>
+#include <stdlib.h>
+#include "calc.tab.h"
+void showError();
 %}
 
-%option noyywrap
-
-DIGIT [0-9]
-NUM {DIGIT}+
-
+numbers ([0-9])+ 
 
 %%
-{NUM}           { yylval = atoi(yytext); return NUMBER; }
-[-()+*/;]       { return *yytext; }
-"calcular"      { return CALCULAR; } 
-[[:blank:]];
-.               { yyerror("caracter invalido"); }
+
+{numbers}      { yylval.number = atoi(yytext); return (NUM); }
+"+"            { return PLUS; }
+"-"            { return MINUS; }
+";"            { return SEMICOLON; }
+[ \t\n]        { /* Ignorar espacios, tabulaciones y nuevas líneas */ }
+.              { showError(); }
 
 %%
+
+void showError(){
+    printf("Other input\n");
+}
+
+int yywrap(){
+    return 1;
+}

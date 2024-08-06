@@ -1,58 +1,65 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h> // Para atoi
-    int yylex();
-    void yyerror(const char *s);
+#include <stdio.h>
+
+int yylex();
+int yyerror(char *s);
+
 %}
 
 %union {
-    int num;
+    int number;
 }
 
-%token CALCULAR
-%token <num> NUMBER
-
-%type <num> Expr
-
-%start INICIO
-%left '+' '-'
-%left '*' '/'
-
+%token <number> NUM
+%token PLUS MINUS SEMICOLON
+%type <number> expr term
 
 %%
 
-INICIO
-    : CALCULAR '(' Expr ')' ';'
-    {
-        printf("Resultado: %d\n", $3);
-        return 0;
+prog:
+    stmts
+;
+
+stmts:
+    stmt SEMICOLON stmts
+    | stmt SEMICOLON
+;
+
+stmt:
+    expr {
+        printf("Resultado: %d\n", $1);
     }
 ;
 
-Expr
-    : Expr '+' Expr
-    {
+expr:
+    expr PLUS term {
         $$ = $1 + $3;
     }
-    | Expr '-' Expr
-    {
+    | expr MINUS term {
         $$ = $1 - $3;
     }
-    | Expr '*' Expr
-    {
-        $$ = $1 * $3;
-    }
-    | Expr '/' Expr
-    {
-        $$ = $1 / $3;
-    }
-    | NUMBER
-    {
+    | term {
         $$ = $1;
     }
 ;
+
+term:
+    NUM {
+        $$ = $1;
+    }
+;
+
 %%
 
-void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+int yyerror(char *s)
+{
+    printf("Syntax Error: %s\n", s);
+    return 0;
+}
+
+int main()
+{
+    printf("Ingrese una expresión:\n");
+    yyparse();
+    return 0;
 }

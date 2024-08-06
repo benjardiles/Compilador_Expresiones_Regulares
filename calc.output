@@ -1,0 +1,164 @@
+Gramática
+
+    0 $accept: prog $end
+
+    1 prog: stmts
+
+    2 stmts: stmt SEMICOLON stmts
+    3      | stmt SEMICOLON
+
+    4 stmt: expr
+
+    5 expr: expr PLUS term
+    6     | expr MINUS term
+    7     | term
+
+    8 term: NUM
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256)
+NUM (258) 8
+PLUS (259) 5
+MINUS (260) 6
+SEMICOLON (261) 2 3
+
+
+No terminales con las reglas donde aparecen
+
+$accept (7)
+    en la izquierda: 0
+prog (8)
+    en la izquierda: 1, en la derecha: 0
+stmts (9)
+    en la izquierda: 2 3, en la derecha: 1 2
+stmt (10)
+    en la izquierda: 4, en la derecha: 2 3
+expr (11)
+    en la izquierda: 5 6 7, en la derecha: 4 5 6
+term (12)
+    en la izquierda: 8, en la derecha: 5 6 7
+
+
+estado 0
+
+    0 $accept: . prog $end
+
+    NUM  desplazar e ir al estado 1
+
+    prog   ir al estado 2
+    stmts  ir al estado 3
+    stmt   ir al estado 4
+    expr   ir al estado 5
+    term   ir al estado 6
+
+
+estado 1
+
+    8 term: NUM .
+
+    $default  reduce usando la regla 8 (term)
+
+
+estado 2
+
+    0 $accept: prog . $end
+
+    $end  desplazar e ir al estado 7
+
+
+estado 3
+
+    1 prog: stmts .
+
+    $default  reduce usando la regla 1 (prog)
+
+
+estado 4
+
+    2 stmts: stmt . SEMICOLON stmts
+    3      | stmt . SEMICOLON
+
+    SEMICOLON  desplazar e ir al estado 8
+
+
+estado 5
+
+    4 stmt: expr .
+    5 expr: expr . PLUS term
+    6     | expr . MINUS term
+
+    PLUS   desplazar e ir al estado 9
+    MINUS  desplazar e ir al estado 10
+
+    $default  reduce usando la regla 4 (stmt)
+
+
+estado 6
+
+    7 expr: term .
+
+    $default  reduce usando la regla 7 (expr)
+
+
+estado 7
+
+    0 $accept: prog $end .
+
+    $default  aceptar
+
+
+estado 8
+
+    2 stmts: stmt SEMICOLON . stmts
+    3      | stmt SEMICOLON .
+
+    NUM  desplazar e ir al estado 1
+
+    $default  reduce usando la regla 3 (stmts)
+
+    stmts  ir al estado 11
+    stmt   ir al estado 4
+    expr   ir al estado 5
+    term   ir al estado 6
+
+
+estado 9
+
+    5 expr: expr PLUS . term
+
+    NUM  desplazar e ir al estado 1
+
+    term  ir al estado 12
+
+
+estado 10
+
+    6 expr: expr MINUS . term
+
+    NUM  desplazar e ir al estado 1
+
+    term  ir al estado 13
+
+
+estado 11
+
+    2 stmts: stmt SEMICOLON stmts .
+
+    $default  reduce usando la regla 2 (stmts)
+
+
+estado 12
+
+    5 expr: expr PLUS term .
+
+    $default  reduce usando la regla 5 (expr)
+
+
+estado 13
+
+    6 expr: expr MINUS term .
+
+    $default  reduce usando la regla 6 (expr)
